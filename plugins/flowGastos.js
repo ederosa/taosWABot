@@ -59,7 +59,7 @@ const flowGastos = addKeyword(['gastos', 'gasto'])
       const formattedDate = getDate(mensajeRecibido[1]);
 
       const sheetFirstColumn = getColumn(Number(formattedDate[1]) - 1, process.env.PRIMERACOLMESES.split(","));
-      const sheetSecondColumn = getColumn(Number(formattedDate[1]), process.env.PRIMERACOLMESES.split(","));
+      const sheetSecondColumn = getColumn(Number(formattedDate[1]) - 1, process.env.SEGUNDACOLMESES.split(","));
       const sheetRow = process.env.SHEETROW;
       const sheetRange = process.env.SHEETRANGE;
 
