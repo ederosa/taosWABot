@@ -1,11 +1,11 @@
 {
-  "name": "base-bailey-memory",
+  "name": "taosWABot",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "scripts": {
     "prestart": "npx eslint . --no-ignore",
-    "pre-copy": "cd .. && npm run  copy.lib base-baileys-memory",
+    "pre-copy": "cd .. && npm run  copy.lib taosWABot",
     "start": "node app.js"
   },
   "keywords": [],
