@@ -2,3 +2,4 @@ googleapis.json
 node_modules/
 bot_sessions/
 *.png
+*.log
