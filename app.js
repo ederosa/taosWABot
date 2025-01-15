@@ -7,6 +7,7 @@ const QRPortalWeb = require('@bot-whatsapp/portal')
 const BaileysProvider = require('@bot-whatsapp/provider/baileys')
 const MockAdapter = require('@bot-whatsapp/database/mock')
 
+// Flow de gastos
 const { flowGastos } = require("./plugins/flowGastos.js");
 
 const main = async () => {
