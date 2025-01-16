@@ -1,13 +1,6 @@
 const { addKeyword } = require('@bot-whatsapp/bot')
 const { googleSheets } = require("./googlesheetclient.js");
 
-// Devuelve la columna donde va la fecha y descripción y/o el 
-// importe de acuerdo al valor de columns
-function getColumn(month, columns) {
-  const meses = columns;
-  return meses[month];
-};
-
 // Agrega cero si es menor de 10
 function addZeroToDate(value) {
   if (Number(value) < 10)
@@ -58,29 +51,40 @@ const flowGastos = addKeyword(['gastos', 'gasto'])
 
       const formattedDate = getDate(mensajeRecibido[1]);
 
-      const sheetFirstColumn = getColumn(Number(formattedDate[1]) - 1, process.env.PRIMERACOLMESES.split(","));
-      const sheetSecondColumn = getColumn(Number(formattedDate[1]) - 1, process.env.SEGUNDACOLMESES.split(","));
+      // Obtiene la primera y segunda columna.
+      const sheetFirstColumn = process.env.PRIMERACOLMESES.split(",")[Number(formattedDate[1]) - 1];
+      const sheetSecondColumn = process.env.SEGUNDACOLMESES.split(",")[Number(formattedDate[1]) - 1];
+
       const sheetRow = process.env.SHEETROW;
       const sheetRange = process.env.SHEETRANGE;
 
       // Obtenemos columna a insertar  y calculamos la última celda.
       const reader = await googleSheets.read(process.env.SPREADSHEETID, `${sheetRange}!${sheetFirstColumn}${sheetRow}:${sheetFirstColumn}`);
-      const cantidadFilas = reader.length + 1;
-      const ultimaFila = cantidadFilas + 1;
 
+      // Obtenemos la fila de la primera celda sin valores
+      const ultimaFila = reader.length + Number(sheetRow);
+
+      // Esta variable nos va a indicar qué posición del array de parámetros vamos a tomar.
       let initialPos = 1;
 
-      // Armamos el array para escribir en la planilla
+      // Armamos el array para escribir en la planilla de acuerdo 
+      // a la cantidad de paràmetros ingresados por el usuario.
       if (mensajeRecibido.length == process.env.CANTPARAM)
         initialPos = initialPos + 1;
 
+      // Valores a poner en las celdas
       const values = [[formattedDate[0] + " - " + mensajeRecibido[initialPos], mensajeRecibido[initialPos + 1]]];
 
-      const writer = googleSheets.write(process.env.SPREADSHEETID,
-        //process.env.RANGE,
-        `${sheetRange}!${sheetFirstColumn}${ultimaFila}:${sheetSecondColumn}${ultimaFila}`,
-        values,
-        'USER_ENTERED');
+      try {
+        // Llamamos a la función para escribir en la celda con los valores que definimos. 
+        const writer = googleSheets.write(process.env.SPREADSHEETID,
+          //process.env.RANGE,
+          `${sheetRange}!${sheetFirstColumn}${ultimaFila}:${sheetSecondColumn}${ultimaFila}`,
+          values,
+          'USER_ENTERED');
+      } catch (error) {
+        console.error(error);
+      }
 
     }
   })
