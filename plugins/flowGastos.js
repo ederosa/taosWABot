@@ -42,50 +42,52 @@ const flowGastos = addKeyword(['gastos', 'gasto'])
 
     // Número de celular
     //const numeroDeWhatsapp = ctx.from
+    if (process.env.WHITELIST.split(",").includes(ctx.from)) {
 
-    // Construímos un array con los valores recibidos en el mensaje.
-    const mensajeRecibido = ctx.body.split(" ");
-    // Si el mensaje tiene entre 3 y 4 palabras pasa.
-    if (mensajeRecibido.length >= process.env.CANTMINPARAM
-      && mensajeRecibido.length <= process.env.CANTPARAM) {
 
-      const formattedDate = getDate(mensajeRecibido[1]);
+      // Construímos un array con los valores recibidos en el mensaje.
+      const mensajeRecibido = ctx.body.split(" ");
+      // Si el mensaje tiene entre 3 y 4 palabras pasa.
+      if (mensajeRecibido.length >= process.env.CANTMINPARAM
+        && mensajeRecibido.length <= process.env.CANTPARAM) {
 
-      // Obtiene la primera y segunda columna.
-      const sheetFirstColumn = process.env.PRIMERACOLMESES.split(",")[Number(formattedDate[1]) - 1];
-      const sheetSecondColumn = process.env.SEGUNDACOLMESES.split(",")[Number(formattedDate[1]) - 1];
+        const formattedDate = getDate(mensajeRecibido[1]);
 
-      const sheetRow = process.env.SHEETROW;
-      const sheetRange = process.env.SHEETRANGE;
+        // Obtiene la primera y segunda columna.
+        const sheetFirstColumn = process.env.PRIMERACOLMESES.split(",")[Number(formattedDate[1]) - 1];
+        const sheetSecondColumn = process.env.SEGUNDACOLMESES.split(",")[Number(formattedDate[1]) - 1];
 
-      // Obtenemos columna a insertar  y calculamos la última celda.
-      const reader = await googleSheets.read(process.env.SPREADSHEETID, `${sheetRange}!${sheetFirstColumn}${sheetRow}:${sheetFirstColumn}`);
+        const sheetRow = process.env.SHEETROW;
+        const sheetRange = process.env.SHEETRANGE;
 
-      // Obtenemos la fila de la primera celda sin valores
-      const ultimaFila = reader.length + Number(sheetRow);
+        // Obtenemos columna a insertar  y calculamos la última celda.
+        const reader = await googleSheets.read(process.env.SPREADSHEETID, `${sheetRange}!${sheetFirstColumn}${sheetRow}:${sheetFirstColumn}`);
 
-      // Esta variable nos va a indicar qué posición del array de parámetros vamos a tomar.
-      let initialPos = 1;
+        // Obtenemos la fila de la primera celda sin valores
+        const ultimaFila = reader.length + Number(sheetRow);
 
-      // Armamos el array para escribir en la planilla de acuerdo 
-      // a la cantidad de paràmetros ingresados por el usuario.
-      if (mensajeRecibido.length == process.env.CANTPARAM)
-        initialPos = initialPos + 1;
+        // Esta variable nos va a indicar qué posición del array de parámetros vamos a tomar.
+        let initialPos = 1;
 
-      // Valores a poner en las celdas
-      const values = [[formattedDate[0] + " - " + mensajeRecibido[initialPos], mensajeRecibido[initialPos + 1]]];
+        // Armamos el array para escribir en la planilla de acuerdo 
+        // a la cantidad de paràmetros ingresados por el usuario.
+        if (mensajeRecibido.length == process.env.CANTPARAM)
+          initialPos = initialPos + 1;
 
-      try {
-        // Llamamos a la función para escribir en la celda con los valores que definimos. 
-        const writer = googleSheets.write(process.env.SPREADSHEETID,
-          //process.env.RANGE,
-          `${sheetRange}!${sheetFirstColumn}${ultimaFila}:${sheetSecondColumn}${ultimaFila}`,
-          values,
-          'USER_ENTERED');
-      } catch (error) {
-        console.error(error);
+        // Valores a poner en las celdas
+        const values = [[formattedDate[0] + " - " + mensajeRecibido[initialPos], mensajeRecibido[initialPos + 1]]];
+
+        try {
+          // Llamamos a la función para escribir en la celda con los valores que definimos. 
+          const writer = googleSheets.write(process.env.SPREADSHEETID,
+            //process.env.RANGE,
+            `${sheetRange}!${sheetFirstColumn}${ultimaFila}:${sheetSecondColumn}${ultimaFila}`,
+            values,
+            'USER_ENTERED');
+        } catch (error) {
+          console.error(error);
+        }
       }
-
     }
   })
 
