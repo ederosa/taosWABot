@@ -6,7 +6,7 @@
   "scripts": {
     "prestart": "npx eslint . --no-ignore",
     "pre-copy": "cd .. && npm run  copy.lib taosWABot",
-    "start": "node app.js"
+    "start": "nodemon app.js"
   },
   "keywords": [],
   "dependencies": {
@@ -23,7 +23,8 @@
   },
   "devDependencies": {
     "eslint": "^8.52.0",
-    "eslint-plugin-bot-whatsapp": "latest"
+    "eslint-plugin-bot-whatsapp": "latest",
+    "nodemon": "^3.1.9"
   },
   "author": "",
   "license": "ISC"
