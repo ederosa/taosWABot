@@ -4,7 +4,7 @@ const { googleSheets } = require("./googlesheetclient.js");
 // Agrega cero si es menor de 10
 function addZeroToDate(value) {
   if (Number(value) < 10)
-    return '0' + value;
+    return '0' + Number(value);
   return value
 }
 
