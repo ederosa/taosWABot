@@ -41,9 +41,10 @@ const flowGastos = addKeyword(['gastos', 'gasto'])
   .addAnswer('Hola, intentaremos cargar el gasto!', null, async (ctx) => {
 
     // Número de celular
-    //const numeroDeWhatsapp = ctx.from
-    if (process.env.WHITELIST.split(",").includes(ctx.from)) {
+    const numeroDeWhatsapp = ctx.from;
 
+    // Verificamos que estén mandando el mensaje de un número válido.
+    if (process.env.WHITELIST.split(",").includes(numeroDeWhatsapp)) {
 
       // Construímos un array con los valores recibidos en el mensaje.
       const mensajeRecibido = ctx.body.split(" ");
