@@ -4,4 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    command: npm start
+    network_mode: host
     restart: "unless-stopped"
+    volumes:
+      - ./:/app
