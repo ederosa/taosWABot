@@ -85,6 +85,7 @@ const flowGastos = addKeyword(['gastos', 'gasto'])
             `${sheetRange}!${sheetFirstColumn}${ultimaFila}:${sheetSecondColumn}${ultimaFila}`,
             values,
             'USER_ENTERED');
+          console.log("Gasto cargado!")
         } catch (error) {
           console.error(error);
         }
