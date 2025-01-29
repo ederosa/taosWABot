@@ -3,8 +3,64 @@
 
 require('dotenv').config();
 
+// Chatbot
+const { createBot, createProvider, createFlow } = require('@bot-whatsapp/bot')
 
-const userID = '5491150100910@s.whatsapp.net';
+const QRPortalWeb = require('@bot-whatsapp/portal')
+const BaileysProvider = require('@bot-whatsapp/provider/baileys')
+const MockAdapter = require('@bot-whatsapp/database/mock')
+// Flow de gastos
+const { flowMails } = require("./plugins/flowMails.js");
+
+const esperarConexion = async (provider) => {
+  return new Promise((resolve) => {
+    const checkReady = () => {
+      //console.log("🔍 Revisando si provider.vendor está disponible...");
+      if (provider.vendor) {
+        //console.log("✅ Conexión establecida con WhatsApp.");
+        resolve();
+      } else {
+        //console.log("⏳ Provider aún no está listo, esperando...");
+        setTimeout(checkReady, 2000);
+      }
+    };
+    checkReady();
+  });
+};
+
+const enviarMensaje = async (provider, userID, message) => {
+  try {
+    console.log(message)
+    if (!provider.vendor) {
+      throw new Error("❌ El proveedor aún no está completamente inicializado.");
+    }
+    await provider.sendText(userID, message);
+    console.log("✅ Mensaje enviado con éxito!");
+  } catch (error) {
+    console.error("❌ Error al enviar mensaje:", error);
+  }
+};
+
+const main = async (messages, userID) => {
+  const BOTNAME = "botMails";
+  const adapterDB = new MockAdapter()
+  const adapterFlow = createFlow([flowMails])
+  const adapterProvider = createProvider(BaileysProvider, { name: BOTNAME });
+
+  createBot({
+    flow: adapterFlow,
+    provider: adapterProvider,
+    database: adapterDB,
+  })
+  await esperarConexion(adapterProvider);
+  for (const value of messages) {
+    await enviarMensaje(adapterProvider, userID, value[0].summary_text)
+  }
+  //QRPortalWeb()
+}
+// Chatbot - Fin
+
+
 const { convert } = require('html-to-text');
 const options = {
   wordwrap: 130,
@@ -17,7 +73,12 @@ const { google } = require('googleapis');
 const { auth } = require('googleapis/build/src/apis/gkehub');
 const condition = process.env.CONDITION;
 
+const userID = process.env.WHATSAPPUSERID;
+// Token para acceder a la api de resumen
+// Es una variable de entorno que no està en el .env para que 
+// no suba a github.
 const huggingface_facebook = process.env.HUGGINGFACE_FACEBOOK
+
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
 // The file token.json stores the user's access and refresh tokens, and is
@@ -170,8 +231,14 @@ async function query(data) {
 async function initiate(condition) {
   const client = await authorize();
   const messages = await listMessages(client, condition)
-  const mensajesProcesados = await processMessages(client, messages)
-  console.log(mensajesProcesados)
+  if (messages) {
+    const mensajesProcesados = await processMessages(client, messages)
+    //  console.log(mensajesProcesados)
+    await main(mensajesProcesados, userID)
+  } else {
+    console.log("No hay mensajes que enviar")
+  }
+  process.exit(0)
 }
 
 //authorize().then(listLabels).catch(console.error);
