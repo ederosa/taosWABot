@@ -52,11 +52,13 @@ const main = async (messages, userID) => {
     provider: adapterProvider,
     database: adapterDB,
   })
+
+  QRPortalWeb({ name: BOTNAME, port: 3001 })
+
   await esperarConexion(adapterProvider);
   for (const value of messages) {
     await enviarMensaje(adapterProvider, userID, value[0].summary_text)
   }
-  QRPortalWeb()
 }
 // Chatbot - Fin
 
