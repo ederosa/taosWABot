@@ -56,7 +56,7 @@ const main = async (messages, userID) => {
   for (const value of messages) {
     await enviarMensaje(adapterProvider, userID, value[0].summary_text)
   }
-  //QRPortalWeb()
+  QRPortalWeb()
 }
 // Chatbot - Fin
 
