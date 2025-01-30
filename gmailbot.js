@@ -193,16 +193,18 @@ async function processMessages(auth, messages) {
 }
 
 async function getMessage(auth, messageId) {
-  // console.log(messageId)
+  //  console.log(messageId)
   const gmail = google.gmail({ version: 'v1', auth });
   const res = await gmail.users.messages.get({
     userId: 'me',
     id: messageId
   });
-  //  console.log(res.data.payload.headers)
+  //console.log(res);
+  // console.log(res.data.payload.headers)
   //  console.log(res.data.payload.mimeType)
   const subject = res.data.payload.headers.find(item => item.name === 'Subject').value;
   const datesend = res.data.payload.headers.find(item => item.name === 'Date').value;
+  const headerMessageId = res.data.payload.headers.find(item => item.name === 'Message-ID').value;
   const dateObject = generalFunctions.obtenerFechaFormateada(new Date(datesend), true);
 
   //  console.log(res.data.payload.mimeType)
@@ -219,7 +221,7 @@ async function getMessage(auth, messageId) {
     mensaje = Buffer.from(res.data.payload.parts[0].parts[0].body.data, 'base64').toString();
 
   let text = await query({ "inputs": mensaje })
-  text[0].summary_text = "*Asunto:* " + subject + "\n *Fecha:* " + dateObject + "\n *Mensaje:* " + text[0].summary_text
+  text[0].summary_text = "*Asunto:* " + subject + "\n *Fecha:* " + dateObject + "\n *Mensaje:* " + text[0].summary_text;// + "\n *Enlace:*  https://mail.google.com/mail/u/0/#search/rfc822msgid:" + encodeURI(headerMessageId);
   return text
 }
 
