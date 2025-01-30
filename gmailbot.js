@@ -3,6 +3,8 @@
 
 require('dotenv').config();
 
+const { generalFunctions } = require("./plugins/functions.js");
+
 // Chatbot
 const { createBot, createProvider, createFlow } = require('@bot-whatsapp/bot')
 
@@ -30,7 +32,7 @@ const esperarConexion = async (provider) => {
 
 const enviarMensaje = async (provider, userID, message) => {
   try {
-    console.log(message)
+    //console.log(message)
     if (!provider.vendor) {
       throw new Error("❌ El proveedor aún no está completamente inicializado.");
     }
@@ -197,6 +199,12 @@ async function getMessage(auth, messageId) {
     userId: 'me',
     id: messageId
   });
+  //  console.log(res.data.payload.headers)
+  //  console.log(res.data.payload.mimeType)
+  const subject = res.data.payload.headers.find(item => item.name === 'Subject').value;
+  const datesend = res.data.payload.headers.find(item => item.name === 'Date').value;
+  const dateObject = generalFunctions.obtenerFechaFormateada(new Date(datesend), true);
+
   //  console.log(res.data.payload.mimeType)
   let mensaje = "";
   if (res.data.payload.mimeType == 'text/html')
@@ -206,11 +214,12 @@ async function getMessage(auth, messageId) {
   else if (res.data.payload.mimeType == 'multipart/alternative'
     || res.data.payload.mimeType == 'multipart/alternaitve')
     mensaje = Buffer.from(res.data.payload.parts[0].body.data, 'base64').toString();
-  else if (res.data.payload.mimeType == 'multipart/mixed')
+  else if (res.data.payload.mimeType == 'multipart/mixed'
+    || res.data.payload.mimeType == 'multipart/related')
     mensaje = Buffer.from(res.data.payload.parts[0].parts[0].body.data, 'base64').toString();
 
-  const text = await query({ "inputs": mensaje })
-  //  console.log(text)
+  let text = await query({ "inputs": mensaje })
+  text[0].summary_text = "*Asunto:* " + subject + "\n *Fecha:* " + dateObject + "\n *Mensaje:* " + text[0].summary_text
   return text
 }
 
@@ -235,7 +244,7 @@ async function initiate(condition) {
   const messages = await listMessages(client, condition)
   if (messages) {
     const mensajesProcesados = await processMessages(client, messages)
-    //  console.log(mensajesProcesados)
+    //console.log(mensajesProcesados)
     await main(mensajesProcesados, userID)
   } else {
     console.log("No hay mensajes que enviar")
