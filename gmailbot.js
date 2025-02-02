@@ -222,7 +222,8 @@ async function getMessage(auth, messageId) {
 
   let text = await query({ "inputs": mensaje })
   text[0].summary_text = "*Asunto:* " + subject + "\n *Fecha:* " + dateObject + "\n *Mensaje:* " + text[0].summary_text;// + "\n *Enlace:*  https://mail.google.com/mail/u/0/#search/rfc822msgid:" + encodeURI(headerMessageId);
-  return text
+
+  return text;
 }
 
 async function query(data) {
