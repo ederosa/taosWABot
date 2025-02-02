@@ -76,7 +76,7 @@ const flowGastos = addKeyword(['gastos', 'gasto'])
           initialPos = initialPos + 1;
 
         // Valores a poner en las celdas
-        const values = [[formattedDate[0] + " - " + mensajeRecibido[initialPos], mensajeRecibido[initialPos + 1]]];
+        const values = [[addZeroToDate(formattedDate[0]) + " - " + mensajeRecibido[initialPos], mensajeRecibido[initialPos + 1]]];
 
         try {
           // Llamamos a la función para escribir en la celda con los valores que definimos. 
