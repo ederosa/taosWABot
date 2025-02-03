@@ -55,7 +55,7 @@ const main = async (messages, userID) => {
     database: adapterDB,
   })
 
-  QRPortalWeb({ name: BOTNAME, port: 3001 })
+  QRPortalWeb({ name: BOTNAME, port: 3009 })
 
   await esperarConexion(adapterProvider);
   for (const value of messages) {
