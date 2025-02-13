@@ -17,3 +17,13 @@ Con el archivoi **credentials.json** creado y copiado en el directorio de nuestr
 Cuando se haya generado ese archivo, que queda copiado en el mismo directorio del archivo de credenciales, la aplicación se ejecutará sin problemas. **Recordar copiarlo en el servidor donde se ejecuta nuestra aplicación porque no se subirá, ni tampoco el archivo credentials.json, al repositorio.**
 
 En caso de que el token sea revocado o invalidado repetir este procedimiento.
+
+## Token de IA
+
+Recordar definir la variable **HUGGINGFACE_FACEBOOK** en _/etc/environment/_ para que quede como variable de entorno con el valor del Bear Token.
+
+## Cron para ejecución del comando
+
+```crontab
+*/30 * * * * ~/git/taosWABot/chequeamails.sh
+```
